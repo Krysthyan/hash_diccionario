@@ -1,3 +1,3 @@
 # hash_diccionario
 ## Xtreme9.0 - Xtreme In Security
-jjjj
+Encontradas 54 palabras, ejercicio aceptado
