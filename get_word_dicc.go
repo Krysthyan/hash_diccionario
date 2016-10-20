@@ -31,6 +31,7 @@ func obtener_lista_password() (lista list.List) {
 	for scanner.Scan() {
 		lista.PushBack(scanner.Text())
 	}
+	archivo.Close()
 	return
 }
 func comprobar_existencia(palabra string)  {
@@ -79,7 +80,7 @@ func escribir_palabra_encontrada(path ,linea string) {
 	if validar == 0 {
 		lista.PushBack(linea)
 	}
-
+	archivo_lectura.Close()
 	archivo, _ := os.Create(path)
 	escritura := bufio.NewWriter(archivo)
 
@@ -87,6 +88,7 @@ func escribir_palabra_encontrada(path ,linea string) {
 		escritura.WriteString(e.Value.(string)+"\n")
     }
 	escritura.Flush()
+	archivo.Close()
 }
 
 func main() {
