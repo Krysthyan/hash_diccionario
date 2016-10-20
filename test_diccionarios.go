@@ -27,6 +27,16 @@ func obtener_lista_path(path string ) (lista list.List) {
     }
 	return 
 }
+func obtener_sha256() (lista list.List) {
+	archivo, _ := os.Open("test_sha256/sha256.txt")
+	scanner := bufio.NewScanner(archivo)
+
+	scanner.Split(bufio.ScanWords)
+	for scanner.Scan() {
+		lista.PushBack(scanner.Text())
+	}
+	return
+}
 
 func leer_diccionario(path string)  {
 	archivo, _ := os.Open(path)
