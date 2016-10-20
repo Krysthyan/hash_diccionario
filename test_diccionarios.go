@@ -3,23 +3,21 @@ package main
 import (
 	"os"
 	"bufio"
-	"fmt"
 	"crypto/sha256"
 	"encoding/base64"
 	"container/list"
 	"io/ioutil"
+
+	"fmt"
+	"strings"
 )
 
-func encriptar_palabra(password string) string {
+func funcion_sha256(password string) string {
 	h := sha256.New()
 	h.Write([]byte(password))
 	b := h.Sum(nil)
 	return base64.StdEncoding.EncodeToString(b)
 }
-func descubir_pababra()  {
-	
-}
-
 func obtener_lista_path(path string ) (lista list.List) {
 	archivos, _ := ioutil.ReadDir(path)
     for _, f := range archivos {
@@ -27,7 +25,7 @@ func obtener_lista_path(path string ) (lista list.List) {
     }
 	return 
 }
-func obtener_sha256() (lista list.List) {
+func obtener_lista_password() (lista list.List) {
 	archivo, _ := os.Open("test_sha256/sha256.txt")
 	scanner := bufio.NewScanner(archivo)
 
@@ -37,25 +35,60 @@ func obtener_sha256() (lista list.List) {
 	}
 	return
 }
+func comprobar_existencia(palabra string)  {
+	palabra_hash := funcion_sha256("IEEE"+palabra+"Xtreme")
+	lista_password :=  obtener_lista_password()
 
-func leer_diccionario(path string)  {
+	for e := lista_password.Front(); e != nil; e=e.Next() {
+		elemento_sha256 :=e.Value.(string)
+
+
+
+		if strings.Compare(palabra_hash,elemento_sha256) == 0 {
+			fmt.Println(elemento_sha256+"  ------  "+palabra_hash)
+			escribir_palabra_encontrada("palabras_encontradas.txt",palabra)
+		}
+
+
+
+    }
+	for e := lista_password.Front(); e != nil; e=e.Next() {
+
+    }
+}
+func decifrar_password(path string)  {
+
 	archivo, _ := os.Open(path)
 	scanner := bufio.NewScanner(archivo)
 
 	scanner.Split(bufio.ScanWords)
 	for scanner.Scan() {
-		linea := scanner.Text()
-		fmt.Println(linea)
+		comprobar_existencia(scanner.Text())
+
 	}
 }
 
-func escribir_password(path ,linea string) {
+func escribir_palabra_encontrada(path ,linea string) {
+	lista := list.List{}
+	lista.PushBack(linea)
+	archivo_lectura, _ := os.Open(path)
+	scanner := bufio.NewScanner(archivo_lectura)
+
+	scanner.Split(bufio.ScanWords)
+	for scanner.Scan() {
+		lista.PushBack(scanner.Text())
+	}
+
 	archivo, _ := os.Create(path)
-	scanner := bufio.NewWriter(archivo)
-	scanner.WriteString(linea)
-	scanner.Flush()
+	escritura := bufio.NewWriter(archivo)
+
+	for e := lista.Front(); e != nil; e=e.Next() {
+		escritura.WriteString(e.Value.(string)+"\n")
+
+    }
+	escritura.Flush()
 }
 
 func main() {
-
+	decifrar_password("diccionarios/test.txt")
 }
