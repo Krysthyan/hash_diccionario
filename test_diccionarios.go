@@ -7,8 +7,6 @@ import (
 	"encoding/base64"
 	"container/list"
 	"io/ioutil"
-
-	"fmt"
 	"strings"
 )
 
@@ -42,10 +40,7 @@ func comprobar_existencia(palabra string)  {
 	for e := lista_password.Front(); e != nil; e=e.Next() {
 		elemento_sha256 :=e.Value.(string)
 
-
-
 		if strings.Compare(palabra_hash,elemento_sha256) == 0 {
-			fmt.Println(elemento_sha256+"  ------  "+palabra_hash)
 			escribir_palabra_encontrada("palabras_encontradas.txt",palabra)
 		}
 
@@ -57,11 +52,10 @@ func comprobar_existencia(palabra string)  {
     }
 }
 func decifrar_password(path string)  {
-
 	archivo, _ := os.Open(path)
 	scanner := bufio.NewScanner(archivo)
-
 	scanner.Split(bufio.ScanWords)
+
 	for scanner.Scan() {
 		comprobar_existencia(scanner.Text())
 
@@ -70,13 +64,20 @@ func decifrar_password(path string)  {
 
 func escribir_palabra_encontrada(path ,linea string) {
 	lista := list.List{}
-	lista.PushBack(linea)
+	validar := 0
+
 	archivo_lectura, _ := os.Open(path)
 	scanner := bufio.NewScanner(archivo_lectura)
 
 	scanner.Split(bufio.ScanWords)
 	for scanner.Scan() {
+		if scanner.Text() == linea{
+			validar = 1
+		}
 		lista.PushBack(scanner.Text())
+	}
+	if validar == 0 {
+		lista.PushBack(linea)
 	}
 
 	archivo, _ := os.Create(path)
@@ -84,7 +85,6 @@ func escribir_palabra_encontrada(path ,linea string) {
 
 	for e := lista.Front(); e != nil; e=e.Next() {
 		escritura.WriteString(e.Value.(string)+"\n")
-
     }
 	escritura.Flush()
 }
