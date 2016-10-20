@@ -90,5 +90,8 @@ func escribir_palabra_encontrada(path ,linea string) {
 }
 
 func main() {
-	decifrar_password("diccionarios/test.txt")
+	lista_rutas := obtener_lista_path("/root/PycharmProjects/hash_diccionario/diccionarios")
+	for e := lista_rutas.Front(); e != nil; e=e.Next() {
+			decifrar_password("diccionarios/"+e.Value.(string))
+    }
 }
